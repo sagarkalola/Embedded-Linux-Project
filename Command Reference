@@ -1,0 +1,285 @@
+Linux Useful Command Reference Guide
+
+The guide lists some of the useful commands. These are command-line programs that can often be used together by using pipelines or redirects (see the Command Basics Reference Guide).
+
+Changing Directories (cd)
+
+When first logging onto a UNIX system you will normally be in your "home" directory. This is normally /home/username (for username stewart that will be /home/stewart).
+
+You can move around the directories by using the cd (change directory command). To change directory use cd followed by either the absolute or relative directory.
+
+Print Working Directory (pwd)
+
+When moving around the directory structure it's easy to forget where you are. The pwd (print working directory) command will return the name of your current directory.
+
+$ pwd
+
+/home/stewart
+There are also two shell variables that are normally set. To view the current working directory you can view the $PWD variable, and to view the previous directory there is the variable $OLDPWD.
+
+The $OLDPWD variable is useful if you want to move back to the directory you were at previously.
+eg.
+
+cd $OLDPWD
+
+Listing the Contents of a Directory (ls)
+
+The ls command can be used to list the contents of a directory.
+
+Typing ls on it's own will list all the files and directories contained within the current directory.
+
+$ cd /home/stewart                                                
+
+$ pwd                                                            
+
+/home/stewart                                                            
+
+$ ls
+
+docs         readme.txt 
+The -l option is used to give more information, including: permissions; owner, and owning group; file size and date last modified in addition to the filename.
+
+Making a new directory (mkdir)
+
+New directories can be created using the mkdir command. Directories can be created either singularly (in which case all directories above it must already exist) or several at a time allowing parent directories to be created at the same time.
+
+Creating a single directory from the current directory is done by mkdir followed by the name of the new directory. For example:
+
+mkdir newdir
+
+The file directory could also have been created using a full path however all the previous directories must already exist. If the previous directories don't already exist then using the -p option will also create the parent directories if they don't exist. For example:
+
+mkdir -p /home/stewart/newdir1/newdir2
+
+Making a New File / Changing the File Timestamps (touch)
+
+A common way of making a file is to save to a file from an application. It is also possible to create a blank file using the touch command. The format is to have the filename after the touch command. For example:
+
+touch newfile
+
+The following rules should be followed when creating a file:
+
+
+The name should be descriptive of the contents
+
+Only use alphanumeric characters i.e. Uppercase, lowercase, numbers, #.@-_
+
+Although spaces can be included in a filename it is advised against this
+
+Should not include shell metacharacters (characters used by shell pipes etc) *?<>/&;:![]$\'"
+
+Should not begin with + or -
+
+Should not be the same as a system command
+
+Filenames starting with . are hidden (cannot be seen from an ls without the -a option)
+
+Less than 255 characters
+
+Whilst this is often the most common use of the touch command it has other uses as well. In fact the touch command real function is to change the modification and/or access timestamps of a file.
+
+The -a option will change the access time, the -m option can be used to change the last modified time. The new time is given using the -t option, to specify the time, or the -r option to set the value to be the same as another file. If the time is not specified using -t or -r, then the current time will be used.
+
+Examples
+
+touch -m -t 201205251700 thisfile
+will set the last modified date of thisfile to 25th may 2012, 17:00. This is based on the POSIX version of the touch command (there is another version that does not adhere to the POSIX standard, but the POSIX version is the most common).
+
+The following example will set the modified date to be the same as another file. This is sometimes used for backup scripts, where a modification time can be set to the same as another file so that it can be identified if the file needs to be included in an incremental backup.
+touch -m -r referencefile thisfile
+
+Removing a file (rm)
+
+Files are removed by using the rm command. To delete the file type rm followed by the file name (can include a path).
+
+There is no way of restoring a deleted file (except from a backup copy) so be careful when deleting files. A slightly safer option is to use the -i option, which will prompt before deleting each file. This is particularly useful when using wildcards (see later). It is possible to setup your profile so that you always use the -i option by default (see the alias command).
+
+Removing a directory (rmdir / rm)
+
+The safest way to delete a directory is to first remove all files from the directory. Then check the directory is empty by issuing ls -a (the -a will show all files even if they are hidden). Then change to the directory above and type
+
+rmdir dirname
+
+The rmdir command will only work when the directory is already empty which provides some protection against accidentally deleting files.
+
+For a more cavalier way of removing a directory or multiple directories the rm command can be used. To do this type rm -r followed by the directory name. For example:
+rm -r dirname
+
+Warning: This is a very dangerous command.
+The rm -r command will remove all directories below the one specified. 
+Be especially careful if logged in as root as this can delete all the data on the disk.
+
+There is no way of undeleting files that are deleted by mistake.
+Using the rm command will delete the file. The only way or restoring the file if deleted accidentally is to copy it from the latest backup disk (if available)! This is not the same as using the wastebasket through the GUI / Filemanger which may allow the file to be restored (unless the file cannot be stored in the wastebasket or it has been purged).
+
+Moving / Renaming a file or directory (mv)
+
+Files or directories can by moved or renamed by using the move command (mv). To move a file enter the mv command followed by the filename and then followed by the new directory. To rename a file or directory enter the mv command followed by the old name and the new name.
+
+You can use the path along with the filename.
+
+Using the -i option will prevent accidentally overwriting an existing file.
+
+Copying a file (cp)
+
+Files can be copied using the cp command. Enter cp followed by the existing file and then the new file (can include paths). Putting the 2nd parameter (new file) as a directory name will copy the file to another with the same name in the new directory.
+
+Using the -i option will prevent accidentally overwriting an existing file if it exists.
+Wildcards can also be used to copy multiple files into different directories.
+
+Viewing the contents of a text file / concatenating files (cat)
+
+You can view the contents of a text file using the cat command. Whilst cat may seam a strange name for a command the view a file, it's because the command can be used to combine two files into a single one (the name comes from concatenate).
+
+To view a file using cat
+
+cat filename
+
+you should not use this on a binary file as the output can do strange things, including sounding the speaker or accidentally re-mapping the keys.
+
+The concatinate is shown in the following example
+
+cat filename1 filename2 > filename 3
+
+Here filename 3 will contain filename1 followed by filename 2.
+
+Other commands that can be used to view a file including more, less, pg and view. Cat is useful for automating a task as it does not need any interaction from a user.
+
+Viewing the beginning / end of a text file (head / tail)
+
+Sometimes you may want to look at the first few or last few lines of a file. For the first few lines you may need to look at the top of a file and take a different action depending upon the type of file, An example of needing to see the last few lines would be a sequential logfile where you want to view the last few entries rather than having to go through all the entries to reach the bottom.
+
+The commands to do these are the head and tail commands for the top and bottom of the file respectively. The commands have a number of options allowing you to specify a certain number of lines or start from a particular place in a file however the easiest way to use it is just to enter
+
+head filename
+or
+tail filename
+
+which will display the first or last 10 lines of a file respectively.
+
+One use of the tail command is to look at the end of a file that is in the process of being updated. The command could be repeatedly run against a file to show any new additions to the file; if the file has not been changed then the previous output will be redisplayed or if the file has changed too much then some lines may be missed. The better way is to use the -f option, which will display any new lines that are added to a file.
+
+tail -f filename
+
+Checking the type of file (file)
+
+If you try and view the contents of a non-text file you will often get garbage on the screen. Sometimes this will actually prevent you from using that terminal by changing the mapping of the keyboard or the screen. It is therefore a good idea to check what an unknown file is before viewing the contents.
+
+One way of doing this is using the file command. Entering
+
+file filename
+
+will tell you if the file is a text file, a command file or a directory etc.
+
+For executable files it will also indicate what system the program is compiled for and if it is dynamically linked etc..
+
+Finding Files and Commands (find)
+
+Sometimes you may have an idea what a command is called or the name of a file, however not whereabouts it is on the disk. The find command will scan the directory structure looking for files that match a certain search requirement.
+
+The command is specified by specifying a directory and then searching all directories underneath that.
+
+The most common way of using the find command is to search for a program or file by it's name. To search the entire computer for a file called filename the following command would be used.
+
+find / -name filename
+
+Further information can also be searched for such as the creation date of the file or it's file owner.
+
+Clear
+
+Typing clear from the command line will clear the terminal screen. This is useful if you've completed a command that has left a lot of text on the screen and you'd like it cleared so that you can see what happens with your next command.
+
+Echo
+
+The echo command just echo's whatever you type onto the screen.
+
+$ echo This is a message to show on the screen
+
+This is a message to show on the screen
+
+$
+Whilst this command might not at first appear to be very useful; when combined with other commands via pipes or used in scripts it can indeed be very useful.
+
+Changing File Permissions (chmod)
+
+Assuming that you are either the owner of the file or root it is possible for you to change the permissions of a file to either add or remove permissions. This is done using the chmod (change mode) command.
+
+The chmod command can be used in one of two ways. The Symbolic Format or the octal format. Symbolic is useful for new users as it is easier to use, however once the octal format is learnt it can be a powerful and quick way of changing file permissions.
+
+The basic format is
+
+chmod mode filename
+
+It is only the format of the mode parameter that is different.
+
+In symbolic format permissions are added or deleted using the following symbols:
+
+u  =  owner of the file (user)
+
+g  =  groups owner  (group)
+
+o  =  anyone else on the system (other)
+
+
+
++ =  add permission
+
+ - =  remove permission
+
+
+
+r  =  read permission
+
+w = write permission
+
+x  = execute permission (if the file is a program then this gives permission to run it)
+For example from the previous ls entry we have a file called file1 which we would like the group to be able to write to:
+
+-rw-r--r--   1 stewart  group01       27 Jan  7 15:14 file1
+Using symbolic format we just need to add write access to the group which can be done using:
+
+chmod g+w file1
+
+In Octal format the mode is based upon a octal number representing the different mode permissions, where each of the permission groups (user, group, others) has an octal value representing the read, write and execute bits. This requires a little bit of knowledge on binary and octal number bases.
+
+To use the octal format we don’t just put the changes, but issue the command on the entire permissions for the file.
+
+ 	User	Group	Others
+Symbolic	rwx	rw-	r--
+Binary	111	110	100
+ 	4+2+1	4+2+0	4+0+0
+Octal	7	6	4
+The file permissions would therefore have the octal number 764 and would therefore be changed using the command
+
+chmod 764 file1
+
+A basic way of working this out is to add the following numbers depending upon the permission required.
+Read = 4
+Write = 2
+Execute = 1
+
+Therefore if you wanted to set read to yes, write to no and execute to yes, this would be 4+1=5
+
+Changing the file owner (chown)
+
+It is possible to change the owner or the group owner of a file. The user can change the group to be another group that they are also a member of, but most other permissions requires the user to have root authority (su / sudo). The owner or group can be changed using the chown (change owner) command.
+
+The format is as follows:
+
+chown user:group filename
+
+Aliases (alias)
+
+The alias command is used to set up alternative names for commands. The format of the command is:
+alias newcmdname='normalcmdname -args'
+
+What will happen then when you enter newcmdname is that it will be replaced with normalcmdname -args. Note: this will happen only on commands entered at the command line and will have no effect on script files. A few examples of where this would be useful is shown below:
+
+alias rm='rm -i'
+This will include the -i option on any delete command. What this does is provide interactive prompting so that you will be asked if you want to delete each file.
+
+alias up='cd ..'
+Whenever you enter the up command it will take you one level up the directory tree. This is useful if you, or a user have trouble remembering a command as you can make easy to remember alias names.
+
+alias computer2='ssh computer2.penguintutor.com'
+If you often ssh to another computer (computer2) this will save you having to type in the whole command instead of entering 30 characters you only need to enter 9 characters.
